@@ -23,15 +23,6 @@ foreach ($input as $line) {
 	echo "nums: $nums\n\n";
 
 	$add = (int)($nums[0] . $nums[-1]);
-	/*
-	if (strlen($nums) > 1) {
-		$add = (int)($nums[0] . $nums[-1]);
-	} else if (strlen($nums) == 1) {
-		$add = $nums[0];
-	} else {
-		$add = 0;
-	}
-	 */
 
 	echo "sum: $sum + $add\n\n";
 	$sum += $add;
