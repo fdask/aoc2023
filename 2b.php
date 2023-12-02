@@ -1,12 +1,10 @@
 #!/usr/bin/php
 <?php
 // cubes are either red, green, or blue
-// which games are possible if the bag contained ONLY 12r, 13g, 14b?
+// what is the fewest number of cubes that would make each game possible?
+// multiply the r*g*b, and sum
 
-// 2149 is the right answer
-$max_red = 12;
-$max_green = 13;
-$max_blue = 14;
+// 71274
 
 $sum = 0;
 
@@ -40,14 +38,27 @@ foreach ($lines as $line) {
 			}
 		}
 
-		// now see if any of the counts exceed our max
-		if (
-			(sizeof($reds) > 0 && max($reds) <= $max_red) && 
-			(sizeof($greens) > 0 && max($greens) <= $max_green) && 
-			(sizeof($blues) > 0 && max($blues) <= $max_blue)
-		) {
-			$sum += $gamenum;
+		if (sizeof($blues) > 0) {
+			$few_blue = max($blues);
+		} else {
+			$few_blue = 0;
 		}
+
+		if (sizeof($greens) > 0) {
+			$few_green = max($greens);
+		} else {
+			$few_green = 0;
+		}
+
+		if (sizeof($reds) > 0) {
+			$few_red = max($reds);
+		} else {
+			$few_red = 0;	
+		}
+
+		$power = $few_blue * $few_green * $few_red;
+
+		$sum += $power;
 	}
 }
 
