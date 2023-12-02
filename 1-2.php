@@ -1,28 +1,76 @@
 #!/usr/bin/php
 <?php
 
-//$input = file_get_contents("https://adventofcode.com/2023/day/1/input");
 // 52606 is too low
+// 55121 is too high.
+// 53221 is the answer
 $input = file("input1.txt");
 
 $sum = 0;
 
+$firstnum = "";
+$lastnum = "";
+
+$lookup = array(
+	'one' => 1,
+	'two' => 2,
+	'three' => 3,
+	'four' => 4,
+	'five' => 5,
+	'six' => 6,
+	'seven' => 7,
+	'eight' => 8,
+	'nine' => 9,
+	'zero' => 0
+);
+
 foreach ($input as $line) {
-	echo "line: $line";
-	$line = preg_replace("@one@", "1", $line);
-	$line = preg_replace("@two@", "2", $line);
-	$line = preg_replace("@three@", "3", $line);
-	$line = preg_replace("@four@", "4", $line);
-	$line = preg_replace("@five@", "5", $line);
-	$line = preg_replace("@six@", "6", $line);
-	$line = preg_replace("@seven@", "7", $line);
-	$line = preg_replace("@eight@", "8", $line);
-	$line = preg_replace("@nine@", "9", $line);
-	$nums = preg_replace("@[^0-9]@", "", $line);
+	// find the first occurence of a digit in the string
+	$chars = str_split($line);
 
-	echo "nums: $nums\n\n";
+	for ($x = 0; $x < strlen($line); $x++) {
+		if (ctype_digit($chars[$x])) {
+			$first = $x;
+			$firstnum = $chars[$x];
 
-	$add = (int)($nums[0] . $nums[-1]);
+			break;
+		}
+	}	
+
+	// find the last occurence of a digit in the string
+	for ($x = 0; $x < strlen($line); $x++) {
+		if (ctype_digit($chars[$x])) {
+			$last = $x;
+			$lastnum = $chars[$x];
+		}
+	}
+
+	foreach (array_keys($lookup) as $number) {
+		$offset = 0;
+
+		do {
+			$match = stripos($line, $number, $offset);
+
+			$offset = $match + 1;
+
+			if ($match !== false) {
+				echo "found a match.  '$number' as $match\n";
+				if ($match < $first) {
+					$first = $match;
+					$firstnum = $lookup[$number];
+				} else if ($match > $last) {
+					$last = $match;
+					$lastnum = $lookup[$number];
+				}
+			}
+		} while ($match !== false);
+	}
+
+	echo "$line";
+	echo "first is $first:$firstnum, last is $last:$lastnum\n\n";
+
+
+	$add = (int)($firstnum . $lastnum);
 
 	echo "sum: $sum + $add\n\n";
 	$sum += $add;
