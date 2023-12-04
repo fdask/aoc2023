@@ -2,6 +2,7 @@
 <?php
 
 // 52508 is too high
+// 26346 correct answer.
 
 // two lists of numbers separated by a vertical bar   a list of winning numbers, then
 // a list of numbers you have.
@@ -33,15 +34,15 @@ foreach ($lines as $line) {
 			// 1 point for the first
 			if ($first) {
 				$first = false;
-				$card += 1;
+				$card = 1;
 			} else {
 				// double after
 				$card = $card * 2;
 			}
-
-			$sum += $card;
 		}
 	}
+
+	$sum += $card;
 }
 
 echo "Sum total of winning tickets is $sum\n";
