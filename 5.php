@@ -2,7 +2,8 @@
 <?php
 // 103 is too low
 // 1531345297 is too high
-// 1536308884
+// 1536308884 is too high
+// 836040384 is the right answer
 
 // list of all the seeds that need planting
 // what type of soil to use with each seed
@@ -106,15 +107,17 @@ function findInMap($map, $number) {
 
 		// is our number in the range?
 		if ($number >= $source && $number < ($source + $range - 1)) {
-			echo "we found a number in range!
+			echo "we found a number in range!\n";
 			
 			// we found a map!
-			return $number + $range;
+			return ($number - $source) + $destination;
 		}
 	}
 
 	// if we get here we have no map.
 	// lets return the equivalent
+	echo "number not in a range...\n";
+
 	return $number;
 }
 ?>
