@@ -34,11 +34,11 @@ for ($linenum = 0; $linenum < sizeof($lines); $linenum++) {
 					}
 
 					for ($y = -1; $y <= strlen($num); $y++) {
-						if ($linenum != 0 && ($y + $pos > 0) && ($y + $pos) <= strlen($line)) {
+						if ($linenum != 0) {
 							$coords[][$linenum - 1] = $y + $pos;
 						}
 
-						if ($linenum < sizeof($lines) && ($y + $pos > 0) && ($y + $pos) <= strlen($line)) {
+						if ($linenum < sizeof($lines)) {
 							$coords[][$linenum + 1] = $y + $pos;
 						}
 					}
@@ -46,10 +46,6 @@ for ($linenum = 0; $linenum < sizeof($lines); $linenum++) {
 					// now lets search the coords for a symbol!
 					foreach ($coords as $coord) {
 						foreach ($coord as $x => $y) {
-							if ($y == 140) {
-								continue;
-							}
-
 							if (preg_match("@[^0-9\.]@", substr($lines[$x], $y, 1))) {
 								// we found a valid part number to be added to the sum
 								$sum += (int)$num;

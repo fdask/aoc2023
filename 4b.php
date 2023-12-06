@@ -14,6 +14,8 @@ $lines = file("input4-sample.txt");
 
 $cardcount = 0;
 $copies = array();
+$winnings = array();
+$multipliers = array();
 
 foreach ($lines as $line) {
 	preg_match("@Card +(\d+):@", $line, $matches);
@@ -34,11 +36,22 @@ foreach ($lines as $line) {
 	$match_count = count($numbers) - count(array_diff($numbers, $wnumbers));
 	echo "We have " . count($numbers) . " numbers, " . $match_count . " matches\n";
 
+	$winnings[$cardnum] = array();
+
 	for ($x = $cardnum + 1; $x < $cardnum + 1 + $match_count; $x++) {
+		$winnings[$cardnum][] = $x;
 		echo "Won a copy of card $x\n";
+		if (!isset($multipliers[$x])) {
+			$multipliers[$x] = 2;
+		} else {
+			$multipliers[$x]++;
+		}
 	}
 
 	$cardcount++;
 }
+
+print_r($winnings);
+print_r($multipliers);
 
 echo "The total number of cards is $cardcount\n";
