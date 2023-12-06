@@ -103,7 +103,7 @@ for ($x = 0; $x < count($seeds); $x++) {
 
 	$loc = null;
 
-	echo "Scanning seed: $seed to " . ($seed + $range) . ": " . ($seed + $range) - $seed . " entries!\n";
+	echo "Scanning seed: $seed to " . ($seed + $range) . ": " . "$range entries!\n";
 	for ($y = $seed; $y < $seed + $range; $y++) {	
 		$tmp_loc = findInMap($maps['humidity-to-location'], 
 			findInMap($maps['temperature-to-humidity'], 
@@ -119,6 +119,8 @@ for ($x = 0; $x < count($seeds); $x++) {
 			$loc = $tmp_loc;
 		}
 	}
+
+	$locs[] = $loc;
 }
 
 echo "these are locations\n";
