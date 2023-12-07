@@ -52,6 +52,19 @@ for ($hc = 0; $hc < count($hands); $hc++) {
 	$hand = $hands[$hc];
 	$bid = $bids[$hc];
 
+	$type = getHandType($hand);
+
+	$types[$type][] = array($hand, $bid);
+}
+
+function getHandType($hand) {
+	// hand might be any number of cards
+	$ret = "";
+
+	// replace all jokers, but keep a count of them
+	$joker_count = 0;
+	$hand = str_replace("J", "", $hand, $joker_count);
+	
 	$unique_cards = implode("", array_unique(str_split($hand)));
 	$cv = array_count_values(str_split($hand));	
 
@@ -59,38 +72,66 @@ for ($hc = 0; $hc < count($hands); $hc++) {
 		// we have a five of a kind.
 		// AAAAA
 		//echo "$hand = five of a kind!\n";
-		$types['five'][] = array($hand, $bid);
+		$ret = 'five';
 	} else if (strlen($unique_cards) == 2) {
 		// four of a kind, full house
 		// 5AAAA, 55AAA
 		if (max(array_values($cv)) == 4) {
 			//echo "$hand = four of a kind\n";
-			$types['four'][] = array($hand, $bid);
+			$ret = 'four';
 		} else {
 			//echo "$hand = full house\n";
-			$types['full'][] = array($hand, $bid);
+			$ret = 'full';
 		}
 	} else if (strlen($unique_cards) == 3) {
 		// three, two pair
 		// 555A1, 55AA1
 		if (max(array_values($cv)) == 3) {
 			//echo "$hand = three of a kind\n";
-			$types['three'][] = array($hand, $bid);
+			$ret = 'three';
 		} else {
 			//echo "$hand = two pair\n";
-			$types['two'][] = array($hand, $bid);
+			$ret = 'two';
 		}
 	} else if (strlen($unique_cards) == 4) {
 		// one pair
 		// 55AKQ
 		//echo "$hand == one pair\n";
-		$types['one'][] = array($hand, $bid);
+		$ret = 'one';
 	} else {
 		// high card
 		// 23456
 		//echo "$hand == high card\n";
-		$types['high'][] = array($hand, $bid);
+		$ret = 'high';
 	}
+
+	// if we have any jokers, bump up the ranking
+	for ($x = 0; $x < $joker_count; $x++) {
+		switch ($ret) {
+			case 'high':
+				$ret = 'one';
+				break;
+			case 'one':
+				$ret = 'two';
+				break;
+			case 'two':
+				$ret = 'three';
+				break;
+			case 'three':
+				$ret = 'full';
+				break;
+			case 'full':
+				$ret = 'four';
+				break;
+			case 'four':
+				$ret = 'five';
+				break;	
+			default:
+				// shouldn't get here
+		}
+	}
+
+	return $ret;
 }
 
 print_r($types);
@@ -114,12 +155,7 @@ foreach (array('high', 'one', 'two', 'three', 'full', 'four', 'five') as $type) 
 			$tmp_hands[] = $hand[0];
 		}		
 
-		//echo "Tmp hands befre sorting\n";
-		//print_r($tmp_hands);
-
-		//echo "Tmp hands after sorting\n";
 		usort($tmp_hands, "compareHands");
-		//print_r($tmp_hands);
 
 		for ($x = 0; $x < count($tmp_hands); $x++) {
 			$sorted_hands[] = $tmp_hands[$x];
@@ -145,7 +181,8 @@ function compareHands($h1, $h2) {
 		return 0;
 	}
 
-	$cards = "23456789TJQKA";
+	// J cards have become the weakest
+	$cards = "J23456789TQKA";
 	$bits1 = str_split($h1);
 	$bits2 = str_split($h2);
 
@@ -163,10 +200,4 @@ function compareHands($h1, $h2) {
 	}
 
 	// we shouldn't get here
-}
-
-// take a string of 5 chars , each representing a card
-// return the highest hand type possible if the jokers are wild
-function jokersWild($hand) {
-
 }
