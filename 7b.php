@@ -19,7 +19,7 @@
 // each hand wins an amount equal to its bid, multiplied by its rank
 // weakest hand is rank 1, second weakest, rank 2, etc.
 
-// correct answer is 253603890
+// 254182854 is too high.
 
 $lines = file("input7.txt");
 
@@ -57,73 +57,106 @@ for ($hc = 0; $hc < count($hands); $hc++) {
 	$types[$type][] = array($hand, $bid);
 }
 
+print_r($types['five']);
+exit;
+
 function getHandType($hand) {
+	// K3T ends up as two pair
 	// hand might be any number of cards
 	$ret = "";
 
 	// replace all jokers, but keep a count of them
 	$joker_count = 0;
+	echo $hand . "\n";
 	$hand = str_replace("J", "", $hand, $joker_count);
+	echo $hand . "\n";
 	
 	$unique_cards = implode("", array_unique(str_split($hand)));
 	$cv = array_count_values(str_split($hand));	
 
+	// this is assuming a five card hand.
 	if (strlen($unique_cards) == 1) {
 		// we have a five of a kind.
 		// AAAAA
-		//echo "$hand = five of a kind!\n";
-		$ret = 'five';
+		switch (strlen($hand)) {
+			case 5:
+				echo "$hand = five of a kind!\n";
+				$ret = 'five';
+				break;
+			case 4:
+				echo "$hand = four of a kind\n";
+				$ret = 'four';
+				break;
+			case 3:
+				echo "$hand = three of a kind\n";
+				$ret = 'three';
+				break;
+			case 2:
+				echo "$hand = two of a kind\n";
+				$ret = 'four';
+				break;
+			case 1:
+				echo "$hand = one of a kind\n";
+				$ret = 'four';
+				break;
 	} else if (strlen($unique_cards) == 2) {
 		// four of a kind, full house
 		// 5AAAA, 55AAA
 		if (max(array_values($cv)) == 4) {
-			//echo "$hand = four of a kind\n";
+			echo "$hand = four of a kind\n";
 			$ret = 'four';
 		} else {
-			//echo "$hand = full house\n";
+			echo "$hand = full house\n";
 			$ret = 'full';
 		}
 	} else if (strlen($unique_cards) == 3) {
 		// three, two pair
 		// 555A1, 55AA1
 		if (max(array_values($cv)) == 3) {
-			//echo "$hand = three of a kind\n";
+			echo "$hand = three of a kind\n";
 			$ret = 'three';
 		} else {
-			//echo "$hand = two pair\n";
+			echo "$hand = two pair\n";
 			$ret = 'two';
 		}
 	} else if (strlen($unique_cards) == 4) {
 		// one pair
 		// 55AKQ
-		//echo "$hand == one pair\n";
+		echo "$hand == one pair\n";
 		$ret = 'one';
 	} else {
 		// high card
 		// 23456
-		//echo "$hand == high card\n";
+		echo "$hand == high card\n";
 		$ret = 'high';
 	}
 
 	// if we have any jokers, bump up the ranking
+	echo "We have $joker_count jokers!\n";
 	for ($x = 0; $x < $joker_count; $x++) {
 		switch ($ret) {
 			case 'high':
+				echo "Bumping high to one\n";
 				$ret = 'one';
 				break;
 			case 'one':
+				echo "Bumping one to two\n";
 				$ret = 'two';
 				break;
 			case 'two':
+				echo "Bumping two to three\n";
 				$ret = 'three';
 				break;
 			case 'three':
+				echo "Bumping three to full\n";
 				$ret = 'full';
 				break;
 			case 'full':
+				echo "Bumping full to four\n";
 				$ret = 'four';
 				break;
 			case 'four':
+				echo "Bumping four to five\n";
 				$ret = 'five';
 				break;	
 			default:
@@ -131,6 +164,7 @@ function getHandType($hand) {
 		}
 	}
 
+	echo "Ended up with a hand type of $ret\n\n";
 	return $ret;
 }
 
