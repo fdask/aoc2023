@@ -1,8 +1,10 @@
 #!/usr/bin/php
 <?php
 
+// 6777 is too low
+// 6778 was RIGHT!
 // find the tile in the loop that is farthest from the starting position
-$lines = file("input10-sample.txt");
+$lines = file("input10.txt");
 
 // load the maze into an array
 $map = array();
@@ -29,28 +31,33 @@ if (canWeGoUp($map, $startPos[0], $startPos[1])) {
 	$oldY = $startPos[1];
 	$curX = $startPos[0] - 1;
 	$curY = $startPos[1];
-} else if (canWeGoLeft($map, $startPos[0], $startPos[1])) {
+} 
+
+if (canWeGoLeft($map, $startPos[0], $startPos[1])) {
 	echo "Can we go left? Yes\n";
 	$oldX = $startPos[0];
 	$oldY = $startPos[1];
 	$curX = $startPos[0];
 	$curY = $startPos[1] - 1;
-} else if (canWeGoDown($map, $startPos[0], $startPos[1])) {
+} 
+
+if (canWeGoDown($map, $startPos[0], $startPos[1])) {
 	echo "Can we go down?  Yes\n";
 	$oldX = $startPos[0];
 	$oldY = $startPos[1];
 	$curX = $startPos[0] + 1;
 	$curY = $startPos[1];
-} else if (canWeGoRight($map, $startPos[0], $startPos[1])) {
+} 
+
+if (canWeGoRight($map, $startPos[0], $startPos[1])) {
 	echo "Can we go right? Yes.\n";
 	$oldX = $startPos[0];
 	$oldY = $startPos[1];
 	$curX = $startPos[0];
 	$curY = $startPos[1] + 1;
-} else {
-	echo "We can't go any direction!\n";
-	exit;
-}
+} 
+
+$steps[] = array($curX, $curY); 
 
 do {
 	$next = nextStep($map, $oldX, $oldY, $curX, $curY);
@@ -60,10 +67,16 @@ do {
 	$curY = $next[1];
 	$steps[] = $next;
 
+	if ($curX == $startPos[0] && $curY == $startPos[1]) {
+		break;
+	}
 	echo "Startpos: {$startPos[0]},{$startPos[1]} Curpos: $curX,$curY\n";
-} while ($curX != $startPos[0] && $curY != $startPos[1]);
+//var_dump($curX !== $startPos[0] and $curY !== $startPos[1]);
+} while (1); //(($curX !== $startPos[0]) && ($curY !== $startPos[1]));
 
 print_r($steps);
+
+echo "The farthest point away is " . ((count($steps) / 2) - 1) . "\n";
 
 // now lets get the coordinates in four cardinal directions from the start.
 function getCardinalRelations($map, $x, $y) {
@@ -79,15 +92,18 @@ function canWeGoUp($map, $x, $y) {
 	/// north
 	// make sure x > 0
 	if ($x <= 0) {
+		echo "Can't go up any more\n";
 		return false;
 	}
 
 	// is the character above valid?   |, 7, F
 	if (in_array($map[$x - 1][$y], array("|", "7", "F"))) {
 		// character is valid and we can make the move
+		echo "We found a | 7 or F character to the north\n";
 		return true;
 	}
 
+	echo "no reason\n";
 	return false;
 }
 
