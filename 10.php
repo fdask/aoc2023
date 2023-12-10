@@ -16,7 +16,54 @@ print_r($map);
 // now lets find the S character
 $startPos = findStart($map, "S");
 
-print_r($startPos);
+echo "Our starting position is {$startPos[0]}, {$startPos[1]}\n";
+$steps = array();
+
+// we want to build the path into an array.
+// do the same for a second array
+
+if (canWeGoUp($map, $startPos[0], $startPos[1])) {
+	// plot our moves
+	echo "Can we go up?\n";
+	$oldX = $startPos[0];
+	$oldY = $startPos[1];
+	$curX = $startPos[0] - 1;
+	$curY = $startPos[1];
+} else if (canWeGoLeft($map, $startPos[0], $startPos[1])) {
+	echo "Can we go left? Yes\n";
+	$oldX = $startPos[0];
+	$oldY = $startPos[1];
+	$curX = $startPos[0];
+	$curY = $startPos[1] - 1;
+} else if (canWeGoDown($map, $startPos[0], $startPos[1])) {
+	echo "Can we go down?  Yes\n";
+	$oldX = $startPos[0];
+	$oldY = $startPos[1];
+	$curX = $startPos[0] + 1;
+	$curY = $startPos[1];
+} else if (canWeGoRight($map, $startPos[0], $startPos[1])) {
+	echo "Can we go right? Yes.\n";
+	$oldX = $startPos[0];
+	$oldY = $startPos[1];
+	$curX = $startPos[0];
+	$curY = $startPos[1] + 1;
+} else {
+	echo "We can't go any direction!\n";
+	exit;
+}
+
+do {
+	$next = nextStep($map, $oldX, $oldY, $curX, $curY);
+	$oldX = $curX;
+	$oldY = $curY;
+	$curX = $next[0];
+	$curY = $next[1];
+	$steps[] = $next;
+
+	echo "Startpos: {$startPos[0]},{$startPos[1]} Curpos: $curX,$curY\n";
+} while ($curX != $startPos[0] && $curY != $startPos[1]);
+
+print_r($steps);
 
 // now lets get the coordinates in four cardinal directions from the start.
 function getCardinalRelations($map, $x, $y) {
@@ -61,13 +108,17 @@ function canWeGoLeft($map, $x, $y) {
 function canWeGoRight($map, $x, $y) {
 	// east
 	if ($y >= count($map[0])) {
+		echo "We can't go any further right because y is already at its limit\n";
 		return false;
 	}
 
 	// is the character valid?
-	if (in_array($map[$x][$y - 1], array("-", "J", "7"))) {
+	if (in_array($map[$x][$y + 1], array("-", "J", "7"))) {
+		echo "We found a -, J, or 7, allowing us to go right\n";
 		return true;
 	}
+
+	echo "Just returning false\n";
 
 	return false;
 }
@@ -78,7 +129,7 @@ function canWeGoDown($map, $x, $y) {
 	}
 
 	// is the character valid?
-	if (in_array($map[$x][$y - 1], array("|", "L", "J"))) {
+	if (in_array($map[$x + 1][$y], array("|", "L", "J"))) {
 		return true;
 	}
 
@@ -89,6 +140,8 @@ function nextStep($map, $oldX, $oldY, $curX, $curY) {
 	// a pipe only has two directions to go
 	// we want the one thats not oldX, oldY
 	$curPipe = $map[$curX][$curY];
+
+	echo "In nextstep, our current pipe is $curPipe, from $curX,$curY\n";
 
 	switch ($curPipe) {
 		case '7':
@@ -117,9 +170,11 @@ function nextStep($map, $oldX, $oldY, $curX, $curY) {
 			// either moving up (x - 1, y) or down (x + 1, y)
 			if ($oldX == $curX - 1 && $oldY = $curY) {
 				// we came from up, so go down
+				echo "Going down to " . ($curX + 1) . ",$curY\n";
 				return array($curX + 1, $curY);
 			} else {
 				// came from down, so go up
+				echo "Going up to " . ($curX - 1) . ",$curY\n";
 				return array($curX - 1, $curY);
 			}
 
@@ -159,9 +214,11 @@ function nextStep($map, $oldX, $oldY, $curX, $curY) {
 			break;
 		default:
 			// shouldn't get here
+			echo "Didn't match any of the cases.  We are looking in $curX, $curY\n";
 	}
 
 	echo "Error shouldn't have gotten here\n";
+	exit;
 }
 
 function findStart($map, $char) {
