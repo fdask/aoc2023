@@ -78,6 +78,76 @@ foreach ($expandCols as $expandCol) {
 
 printArray($map);
 
+// now we have the expanded map.
+// find all the galaxies
+$galaxies = array();
+
+for ($x = 0; $x < count($map); $x++) {
+	for ($y = 0; $y < count($map[0]); $y++) {
+		if ($map[$x][$y] == "#") {
+			$galaxies[] = array($x, $y);
+		}
+	}
+}
+
+print_r($galaxies);
+
+// now lets pair them up
+$pairCount = 0;
+
+$donePairs = array();
+
+for ($x = 0; $x < count($galaxies); $x++) {
+	for ($x2 = 0; $x2 < count($galaxies); $x2++) {
+		if ($x == $x2) {
+			continue;
+		}
+
+		if (!donePair($galaxies[$x][0], $galaxies[$x][1], $galaxies[$x2][0], $galaxies[$x2][1], $donePairs)) {
+			echo "(" . $galaxies[$x][0] . ", " . $galaxies[$x][1] . ") to (" . $galaxies[$x2][0] . ", " . $galaxies[$x2][1] . ")\n";
+			
+			$donePairs[] = array(
+				array($galaxies[$x][0], $galaxies[$x][1]),
+				array($galaxies[$x2][0], $galaxies[$x2][1])
+			);
+
+			$pairCount++;
+		}
+	}
+}
+
+echo "We have a total of $pairCount pairs\n";
+
+//** simple function to handle seeing if we've already done the pair
+function donePair($x1, $y1, $x2, $y2, $donePairs) {
+	echo "Looking for ($x1, $y1) to ($x2, $y2) OR ($x2, $y2) to ($x1, $y1)\n";
+
+	foreach ($donePairs as $donePair) {
+		echo "Does this pair match?\n";
+		print_r($donePair);
+
+		if (
+			($donePair[0][0] == $x1 && $donePair[0][1] == $y1) &&
+			($donePair[1][0] == $x2 && $donePair[1][1] == $y2)
+		) {
+			echo "YES!\n";
+			return true;
+		}
+
+		if (
+			($donePair[1][0] == $x1 && $donePair[1][1] == $y1) &&
+			($donePair[0][0] == $x2 && $donePair[0][1] == $y2)
+		) {
+			echo "YES!\n";
+			return true;
+		} 
+
+	}
+
+	echo "NO!\n";
+
+	return false;
+}
 
 /**
 * print out a multidimensional array in a grid
