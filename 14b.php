@@ -1,7 +1,5 @@
 #!/usr/bin/php
 <?php
-// the answer is 113525.
-
 // we have a platform that can be tilted in any of the four cardinal directions
 // rounded rocks O will roll when titled
 // cube shape rocks stay in place #
@@ -11,11 +9,12 @@
 // is equal to the numbers of rows from the rock to the south edge of the platform
 // including the row the rock is on
 
-// cube shaped rocks down count towards the load
+// cube shaped rocks dont count towards the load
 
-// sample data answer is 136
+// a cycle is a tilt north, west, south, east.
+// perform one million cycles, and then get the load again
 
-$lines = file("input14.txt");
+$lines = file("input14-sample.txt");
 $map = array();
 $total_load = 0;
 
@@ -34,14 +33,43 @@ printMap($map);
 
 // move the rocks
 // the first row of rocks already can't go north any farther
-for ($x = 1; $x < $height; $x++) {
-	for ($y = 0; $y < $width; $y++) {
-		if ($map[$x][$y] == "O") {
-			//echo "Found a rock at $x, $y\n";
-
-			$map = MoveRockUp($map, $x, $y);
+for ($counter = 0; $counter < 1000000000; $counter++) {
+	for ($x = 1; $x < $height; $x++) {
+		for ($y = 0; $y < $width; $y++) {
+			if ($map[$x][$y] == "O") {
+				$map = MoveRockNorth($map, $x, $y);
+			}
 		}
 	}
+
+	// now do west (everything to the left)
+	for ($x = 0; $x < $height; $x++) {
+		for ($y = 1; $y < $width; $y++) {
+			if ($map[$x][$y] == "O") {
+				$map = MoveRockWest($map, $x, $y);
+			}
+		}
+	}
+	
+	// now do south
+	for ($x = $height - 2; $x >= 0; $x--) {
+		for ($y = 0; $y < $width; $y++) {
+			if ($map[$x][$y] == "O") {
+				$map = MoveRockSouth($map, $x, $y);
+			}
+		}
+	}
+
+	// now do east
+	for ($x = 0; $x < $height; $x++) {
+		for ($y = $width - 2; $y >= 0; $y--) {
+			if ($map[$x][$y] == "O") {
+				$map = MoveRockEast($map, $x, $y);
+			}
+		}
+	}
+
+	echo "$counter\n";
 }
 
 printMap($map);
@@ -69,7 +97,7 @@ for ($x = count($map) - 1; $x >= 0; $x--) {
 
 echo "Our total load is $loadSum\n";
 
-function MoveRockUp($map, $x, $y) {
+function MoveRockNorth($map, $x, $y) {
 	//echo "Moving up the rock at $x, $y\n";
 
 	for ($xx = $x - 1; $xx >= 0; $xx--) {
@@ -83,6 +111,50 @@ function MoveRockUp($map, $x, $y) {
 	}
 	
 	//echo "Ended with an xx of $xx\n";
+	return $map;
+}
+
+function MoveRockSouth($map, $x, $y) {
+	// down
+	for ($xx = $x + 1; $xx < count($map); $xx++) {
+		if ($map[$xx][$y] == ".") {
+			$map[$xx - 1][$y] = ".";
+			$map[$xx][$y] = "O";
+		} else {
+			break;
+		}
+	}
+
+	return $map;
+}
+
+function MoveRockEast($map, $x, $y) {
+	// right
+	for ($yy = $y + 1; $yy < count($map[0]); $yy++) {
+		if ($map[$x][$yy] == ".") {
+			$map[$x][$yy - 1] = ".";
+			$map[$x][$yy] = "O";
+		} else {
+			break;
+		}
+	}
+
+	return $map;
+}
+
+function MoveRockWest($map, $x, $y) {
+	// left
+	//echo "($x,$y)\n";
+
+	for ($yy = $y - 1; $yy >= 0; $yy--) {
+		if ($map[$x][$yy] == ".") {
+			$map[$x][$yy + 1] = ".";
+			$map[$x][$yy] = "O";
+		} else {
+			break;
+		}
+	}
+
 	return $map;
 }
 
