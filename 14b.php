@@ -15,6 +15,7 @@
 // perform one million cycles, and then get the load again
 
 $lines = file("input14-sample.txt");
+$startmap = array();
 $map = array();
 $total_load = 0;
 
@@ -26,6 +27,8 @@ foreach ($lines as $line) {
 $height = count($map);
 $width = count($map[0]);
 echo "Map is $height high, $width wide\n";
+
+$startmap = $map;
 
 printMap($map);
 
@@ -69,7 +72,14 @@ for ($counter = 0; $counter < 1000000000; $counter++) {
 		}
 	}
 
-	echo "$counter\n";
+	if (!($counter % 1000)) {
+		echo $counter . "\n";
+	}
+
+	if ($map == $startmap) {
+		echo "Got a startmap ($counter)\n";
+		exit;	
+	}
 }
 
 printMap($map);
