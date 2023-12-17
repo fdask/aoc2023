@@ -9,7 +9,7 @@
 
 // for equal, a number will follow indicating the focal length of the lens that needs to go into
 // the relevant box
-// 231984
+// 231984 is too high
 $lines = file("input15.txt");
 
 $line = trim($lines[0]);
@@ -89,7 +89,6 @@ for ($x = 0; $x < count($boxes); $x++) {
 	if (!empty($boxes[$x])) {
 		foreach ($boxes[$x] as $order => $lens) {
 			if (preg_match("@([a-z]+) (\d+)@", $lens, $matches)) {
-				print_r($matches);
 				$focal_length = $matches[2];
 				$focusing_power += ($x + 1) * ($order + 1) * $focal_length;
 			} else {
