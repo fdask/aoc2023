@@ -16,11 +16,15 @@ $lines = file("input18-sample2.txt");
 // how many cubic meters of lava could the dug out trench hold?
 $map = array();
 
+$upDown = 0;
+$leftRight = 0;
+
 $posX = 0;
 $posY = 0;
 
 $map[0][0] = "#";
 
+// we do a first pass just to get the ultimate dimensions we need
 foreach ($lines as $line) {
 	if (preg_match("@([ULDR]) ([\d+]) \((#[a-z0-9]{6})\)@", trim($line), $matches)) {
 		$direction = $matches[1];
@@ -31,8 +35,9 @@ foreach ($lines as $line) {
 
 		switch ($direction) {
 			case 'D':
-				echo "Starting at posX ($posX, $posY) we go..";
 
+				/*
+				echo "Starting at posX ($posX, $posY) we go..";
 				for ($x = $posX + 1; $x <= ($posX + $meters); $x++) {
 					echo "($x, $posY) ";
 	
@@ -46,9 +51,22 @@ foreach ($lines as $line) {
 				$posX = $x;
 
 				echo "\n";
+				*/
 
 				break;
 			case 'U':
+				/*
+				echo "Starting at ($posX, $posY) we go..";
+
+				for ($x = $posX - 1; $x >= ($posX - $meters); $x--) {
+					
+				}
+
+				$posX = $x;
+
+				echo "\n";
+				*/
+
 				break;
 			case 'R':
 				break;
